@@ -16,7 +16,6 @@ jobs:
 
       - name: test and publish
         run: |
-          cd commands
           npm i
           npm run build
           npm test
