@@ -12,6 +12,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
 
       - run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           bun i
           bun test
           bun publish
