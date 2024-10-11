@@ -4,6 +4,7 @@ import {
   buildHelpText,
   getCommandText,
 } from "./textFuncs";
+import { describe, expect, it } from "bun:test";
 
 describe("text Functions", () => {
   describe("getCommandText", () => {
@@ -35,14 +36,18 @@ describe("text Functions", () => {
         { ...commands, headerText: "" },
         commandsCollection
       );
-      expect(result).toBe("\n\nhelp line...\nhelp line...\nhelp line...\nfooter text...\n");
+      expect(result).toBe(
+        "\n\nhelp line...\nhelp line...\nhelp line...\nfooter text...\n"
+      );
     });
     it("should return help text without footerText", () => {
       const result = buildHelpText(
         { ...commands, footerText: "" },
         commandsCollection
       );
-      expect(result).toBe("\nheader text...\nhelp line...\nhelp line...\nhelp line...\n\n");
+      expect(result).toBe(
+        "\nheader text...\nhelp line...\nhelp line...\nhelp line...\n\n"
+      );
     });
   });
   describe("buildDescriptionsText", () => {

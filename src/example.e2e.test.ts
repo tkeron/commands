@@ -1,7 +1,9 @@
+import { describe, expect, it, spyOn } from "bun:test";
+
 describe("example e2e", () => {
   const { log } = globalThis.console;
   let logs: any[] = [];
-  jest.spyOn(globalThis.console, "log").mockImplementation((...args: any) => {
+  spyOn(globalThis.console, "log").mockImplementation((...args: any) => {
     logs.push(args);
     // log(...args);
   });

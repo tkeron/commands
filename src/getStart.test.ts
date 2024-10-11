@@ -1,22 +1,34 @@
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+  type Mock,
+} from "bun:test";
+
 import { getStart } from "./getStart";
 import { commandsCollection } from "./testConstants";
 
 describe("getStart", () => {
-  let callback: jest.Mock;
+  let callback: Mock<any>;
   let start: (argv?: string[]) => void;
-  let logMock: jest.SpyInstance;
+  let logMock: Mock<any>;
   let logs: any[] = [];
 
   beforeEach(() => {
-    callback = jest.fn();
+    callback = mock();
     commandsCollection.command_1.callback = callback;
     start = getStart(commandsCollection);
-    logMock = jest.spyOn(console, "log").mockImplementation((...args: any) => {
+    logMock = spyOn(console, "log").mockImplementation((...args: any) => {
       logs.push(args);
     });
   });
   afterEach(() => {
-    jest.clearAllMocks();
+    callback.mockClear();
+    logMock.mockClear();
   });
 
   it("happy path, run command", () => {
@@ -45,7 +57,7 @@ describe("getStart", () => {
     expect(logs).toHaveLength(1);
   });
   it("should throw when no args passed", () => {
-    process.argv = undefined;
+    process.argv = <string[]>(<unknown>undefined);
     expect(start).toThrow(new Error("no arguments passed"));
   });
   it("should throw when less than 2 args passed", () => {

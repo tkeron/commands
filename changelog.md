@@ -1,3 +1,7 @@
+# v0.3.0
+
+- migrate project to bun
+
 # v0.1.1
 
 - fixed commands ordered arguments

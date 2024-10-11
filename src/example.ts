@@ -1,4 +1,5 @@
 import { getCommands } from ".";
+import type { Commands } from "./types";
 
 const commands = getCommands("test program", "0.0.14")
   .addCommand("com1")
@@ -60,5 +61,9 @@ commands.start([
     .replace(/\s+/g, " ")
     .split(" "),
 ]);
+
+declare global {
+  var commands: Commands;
+}
 
 globalThis.commands = commands;

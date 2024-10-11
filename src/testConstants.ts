@@ -1,6 +1,6 @@
-import { Command, Commands, CommandsCollection } from "./types";
+import type { Command, Commands, CommandsCollection } from "./types";
 
-export const command: Command = {
+export const command: Command = <Command>(<unknown>{
   name: "command_1",
   aliases: ["al1", "al2"],
   callback: undefined,
@@ -9,7 +9,7 @@ export const command: Command = {
   options: ["op1", "op2"],
   optionsExamples: ["opEx1"],
   positionedArguments: ["pos1", "pos2"],
-};
+});
 export const commands = <Commands>{
   headerText: "header text...",
   footerText: "footer text...",

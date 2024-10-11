@@ -1,6 +1,6 @@
 import { getStart } from "./getStart";
 import { buildHelpText, getCommandText } from "./textFuncs";
-import {
+import type {
   CommandFactory,
   Command,
   Commands,
@@ -26,7 +26,7 @@ export const getCommands = (
 
 export const initCommands = (
   commandsCollection: CommandsCollection,
-  commands: Commands = {
+  commands: Commands = <Commands>(<unknown>{
     programName: "",
     version: "",
     footerText: "",
@@ -35,8 +35,8 @@ export const initCommands = (
     start: undefined,
     addHeaderText: undefined,
     addFooterText: undefined,
-  },
-  commandFactory: CommandFactory = {
+  }),
+  commandFactory: CommandFactory = <CommandFactory>(<unknown>{
     commands: undefined,
     name: undefined,
     addAlias: undefined,
@@ -44,7 +44,7 @@ export const initCommands = (
     addPositionedArgument: undefined,
     addDescription: undefined,
     setCallback: undefined,
-  }
+  })
 ): Commands => {
   if (!commandFactory.commands) commandFactory.commands = () => commands;
   commands.addCommand = getAddCommand(commandsCollection, commandFactory);
@@ -88,7 +88,7 @@ export const getAddCommand =
   (commandsCollection: CommandsCollection, commandFactory: CommandFactory) =>
   (commandName: string) => {
     commandFactory.name = commandName;
-    const command: Command = {
+    const command: Command = <Command>(<unknown>{
       aliases: [],
       callback: undefined,
       description: "",
@@ -97,7 +97,7 @@ export const getAddCommand =
       optionsExamples: [],
       positionedArguments: [],
       getHelpLine: undefined,
-    };
+    });
     commandsCollection[commandName] = command;
     command.getHelpLine = getGetHelpLine(command);
 

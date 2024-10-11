@@ -5,23 +5,16 @@ on:
       - main
 
 jobs:
-  build:
+  build-test-publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
-          registry-url: "https://registry.npmjs.org/"
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
 
-      - name: test and publish
-        run: |
-          npm i
-          npm run build
-          npm test
-          rm -rf src dist/*.test.js .github coverage
-          npm publish --access public
+      - run: |
+          bun i
+          bun test
+          bun run publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          token: ${{ secrets.NPM_TOKEN }}
+

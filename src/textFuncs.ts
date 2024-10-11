@@ -1,4 +1,4 @@
-import { Command, Commands, CommandsCollection } from "./types";
+import type { Command, Commands, CommandsCollection } from "./types";
 
 export const buildHelpText = (
   commands: Commands,

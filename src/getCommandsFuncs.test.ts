@@ -1,4 +1,5 @@
-import { CommandFactory, Commands, CommandsCollection } from "./types";
+import { beforeEach, describe, expect, it } from "bun:test";
+import type { CommandFactory, Commands, CommandsCollection } from "./types";
 import {
   getAddFooterText,
   getAddHeaderText,
@@ -17,7 +18,7 @@ describe("main", () => {
 
   beforeEach(() => {
     commandsCollection = {};
-    commandFactory = {
+    commandFactory = <CommandFactory>(<unknown>{
       commands: undefined,
       name: undefined,
       addAlias: undefined,
@@ -25,7 +26,7 @@ describe("main", () => {
       addPositionedArgument: undefined,
       addDescription: undefined,
       setCallback: undefined,
-    };
+    });
     commands = initCommands(commandsCollection, undefined, commandFactory);
   });
 
@@ -85,7 +86,7 @@ describe("main", () => {
     expect(hl50).toBe("test  ............................................  \n");
   });
   it("", () => {
-    commandFactory.commands = undefined;
+    commandFactory.commands = <() => Commands>(<unknown>undefined);
     initCommands(commandsCollection, commands, commandFactory);
     expect(commandFactory.commands).toBeTruthy;
     expect(commandFactory.commands).not.toThrow();

@@ -1,4 +1,4 @@
-import { CommandsCollection } from "./types";
+import type { CommandsCollection } from "./types";
 
 export const getStart =
   (commandsCollection: CommandsCollection) => (argv?: string[]) => {
@@ -23,7 +23,7 @@ export const getStart =
       .slice(1)
       .filter((arg) => /\=/g.test(arg))
       .map((arg) => arg.split("="))
-      .reduce((p, c) => {
+      .reduce((p: any, c) => {
         p[c[0]] = c[1];
 
         return p;
