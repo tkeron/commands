@@ -5,7 +5,6 @@ describe("example e2e", () => {
   let logs: any[] = [];
   spyOn(globalThis.console, "log").mockImplementation((...args: any) => {
     logs.push(args);
-    // log(...args);
   });
 
   it("should runs ok", (done) => {
