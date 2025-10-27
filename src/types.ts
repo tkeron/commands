@@ -9,7 +9,7 @@ export interface Command {
   callback: Callback;
 }
 
-export type parsedOptions = { [key: string]: string };
+export type parsedOptions = { [key: string]: string } | any;
 
 export type Callback = (options?: parsedOptions) => void;
 
