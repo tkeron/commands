@@ -1,4 +1,4 @@
-import type { Command, Commands, CommandsCollection } from "./types";
+import type { Command, Commands, CommandsCollection } from "../../src/types.js";
 
 export const command: Command = <Command>(<unknown>{
   name: "command_1",

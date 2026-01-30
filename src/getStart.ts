@@ -1,4 +1,4 @@
-import type { CommandsCollection } from "./types";
+import type { CommandsCollection } from "./types.js";
 
 export const getStart =
   (commandsCollection: CommandsCollection) => (argv?: string[]) => {

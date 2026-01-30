@@ -9,8 +9,8 @@ import {
   type Mock,
 } from "bun:test";
 
-import { getStart } from "./getStart";
-import { commandsCollection } from "./testConstants";
+import { getStart } from "../src/getStart.js";
+import { commandsCollection } from "./helpers/testConstants.js";
 
 describe("getStart", () => {
   let callback: Mock<any>;

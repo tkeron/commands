@@ -1,5 +1,5 @@
-import { getCommands } from ".";
-import type { Commands } from "./types";
+import { getCommands } from "../src/index.js";
+import type { Commands } from "../src/types.js";
 
 const commands = getCommands("test program", "0.0.14")
   .addCommand("com1")

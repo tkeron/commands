@@ -1,9 +1,9 @@
-import { command, commands, commandsCollection } from "./testConstants";
+import { command, commands, commandsCollection } from "./helpers/testConstants.js";
 import {
   buildDescriptionsText,
   buildHelpText,
   getCommandText,
-} from "./textFuncs";
+} from "../src/textFuncs.js";
 import { describe, expect, it } from "bun:test";
 
 describe("text Functions", () => {

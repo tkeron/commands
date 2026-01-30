@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "bun:test";
-import type { CommandFactory, Commands, CommandsCollection } from "./types";
+import type { CommandFactory, Commands, CommandsCollection } from "../src/types.js";
 import {
   getAddFooterText,
   getAddHeaderText,
@@ -9,7 +9,7 @@ import {
   getGetHelpLine,
   initCommands,
   initHelpAndVersion,
-} from "./getCommandsFuncs";
+} from "../src/getCommandsFuncs.js";
 
 describe("main", () => {
   let commandsCollection: CommandsCollection;

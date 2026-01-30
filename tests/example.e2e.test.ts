@@ -9,10 +9,8 @@ describe("example e2e", () => {
 
   it("should runs ok", (done) => {
     expect(logs).toHaveLength(0);
-    //@ts-ignore
-    import("./example");
+    import("../examples/example");
     const check = () => {
-      // @ts-ignore
       const { commands } = globalThis;
       if (!commands) return;
       expect(logs).toHaveLength(3);

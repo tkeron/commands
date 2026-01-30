@@ -1,13 +1,13 @@
-import { getStart } from "./getStart";
-import { buildHelpText, getCommandText } from "./textFuncs";
+import { getStart } from "./getStart.js";
+import { buildHelpText, getCommandText } from "./textFuncs.js";
 import type {
   CommandFactory,
   Command,
   Commands,
   CommandsCollection,
   Callback,
-} from "./types";
-export * from "./types";
+} from "./types.js";
+export * from "./types.js";
 
 export const getCommands = (
   programName: string = "program",
