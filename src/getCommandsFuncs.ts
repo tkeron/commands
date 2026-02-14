@@ -11,7 +11,7 @@ export * from "./types.js";
 
 export const getCommands = (
   programName: string = "program",
-  version: string = "0.0.1"
+  version: string = "0.0.1",
 ): Commands => {
   const commandsCollection: CommandsCollection = {};
 
@@ -44,7 +44,7 @@ export const initCommands = (
     addPositionedArgument: undefined,
     addDescription: undefined,
     setCallback: undefined,
-  })
+  }),
 ): Commands => {
   if (!commandFactory.commands) commandFactory.commands = () => commands;
   commands.addCommand = getAddCommand(commandsCollection, commandFactory);
@@ -57,15 +57,15 @@ export const initCommands = (
 
 export const initHelpAndVersion = (
   commands: Commands,
-  commandsCollection: CommandsCollection
+  commandsCollection: CommandsCollection,
 ) => {
   const helpCallback = () =>
-    console["log"](buildHelpText(commands, commandsCollection));
+    console.log(buildHelpText(commands, commandsCollection));
   const versionCallback = () =>
-    console["log"](
+    console.log(
       `${commands.headerText || ""}\n${commands.version}\n${
         commands.footerText || ""
-      }\n`
+      }\n`,
     );
 
   commands
@@ -105,15 +105,15 @@ export const getAddCommand =
     commandFactory.addOption = getAddOption(commandFactory, commandsCollection);
     commandFactory.addDescription = getAddDescription(
       commandFactory,
-      commandsCollection
+      commandsCollection,
     );
     commandFactory.setCallback = getSetCallback(
       commandFactory,
-      commandsCollection
+      commandsCollection,
     );
     commandFactory.addPositionedArgument = getAddPositionedArgument(
       commandFactory,
-      commandsCollection
+      commandsCollection,
     );
 
     return commandFactory;
@@ -121,7 +121,7 @@ export const getAddCommand =
 
 export const getAddAlias = (
   commandFactory: CommandFactory,
-  commandsCollection: CommandsCollection
+  commandsCollection: CommandsCollection,
 ) => {
   return (alias: string) => {
     commandsCollection[commandFactory.name].aliases.push(alias);
@@ -142,13 +142,13 @@ export const getAddOption =
 
 export const getAddPositionedArgument = (
   commandFactory: CommandFactory,
-  commandsCollection: CommandsCollection
+  commandsCollection: CommandsCollection,
 ) => {
   return (arg: string): CommandFactory => {
     const positionedArguments =
       commandsCollection[commandFactory.name].positionedArguments;
 
-    if (!positionedArguments.includes(commandFactory.name)) {
+    if (!positionedArguments.includes(arg)) {
       positionedArguments.push(arg);
     }
 
@@ -158,7 +158,7 @@ export const getAddPositionedArgument = (
 
 export const getSetCallback = (
   commandFactory: CommandFactory,
-  commandsCollection: CommandsCollection
+  commandsCollection: CommandsCollection,
 ) => {
   return (fn: Callback): CommandFactory => {
     commandsCollection[commandFactory.name].callback = fn;
@@ -169,7 +169,7 @@ export const getSetCallback = (
 
 export const getAddDescription = (
   commandFactory: CommandFactory,
-  commandsCollection: CommandsCollection
+  commandsCollection: CommandsCollection,
 ) => {
   return (description: string) => {
     commandsCollection[commandFactory.name].description = description;

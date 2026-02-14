@@ -2,7 +2,7 @@ import type { Command, Commands, CommandsCollection } from "./types.js";
 
 export const buildHelpText = (
   commands: Commands,
-  commandsCollection: CommandsCollection
+  commandsCollection: CommandsCollection,
 ): string => {
   let descriptions = buildDescriptionsText(commandsCollection);
 
@@ -15,7 +15,7 @@ export const buildHelpText = (
 };
 
 export const buildDescriptionsText = (
-  commandsCollection: CommandsCollection
+  commandsCollection: CommandsCollection,
 ): string => {
   let descriptions = "";
   let max = 0;

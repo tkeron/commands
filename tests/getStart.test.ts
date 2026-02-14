@@ -17,8 +17,11 @@ describe("getStart", () => {
   let start: (argv?: string[]) => void;
   let logMock: Mock<any>;
   let logs: any[] = [];
+  let savedArgv: string[];
 
   beforeEach(() => {
+    savedArgv = process.argv;
+    logs = [];
     callback = mock();
     commandsCollection.command_1.callback = callback;
     start = getStart(commandsCollection);
@@ -27,8 +30,9 @@ describe("getStart", () => {
     });
   });
   afterEach(() => {
+    process.argv = savedArgv;
     callback.mockClear();
-    logMock.mockClear();
+    logMock.mockRestore();
   });
 
   it("happy path, run command", () => {
@@ -64,7 +68,7 @@ describe("getStart", () => {
     process.argv = [];
     expect(start).toThrow(new Error("arguments out of range"));
   });
-  it("should show message when passed an unexistent commnad", () => {
+  it("should show message when passed a nonexistent command", () => {
     process.argv = ["", "", "fakeCommand"];
     logs = [];
     start();
@@ -75,5 +79,29 @@ describe("getStart", () => {
   it("run with less positioned arguments", () => {
     start(["", "", "al1", "arg001"]);
     expect(callback).toBeCalledWith({ pos1: "arg001" });
+  });
+  it("should parse option values correctly", () => {
+    start(["node", "app", "command_1", "opt1=hello"]);
+    expect(callback).toBeCalledWith({ opt1: "hello" });
+  });
+
+  it("should parse multiple options", () => {
+    start(["node", "app", "command_1", "opt1=hello", "opt2=world"]);
+    expect(callback).toBeCalledWith({ opt1: "hello", opt2: "world" });
+  });
+
+  it("should handle mixed options and positioned arguments", () => {
+    start(["node", "app", "al1", "arg001", "opt1=value1"]);
+    expect(callback).toBeCalledWith({ pos1: "arg001", opt1: "value1" });
+  });
+
+  it("should handle empty option value", () => {
+    start(["node", "app", "command_1", "opt1="]);
+    expect(callback).toBeCalledWith({ opt1: "" });
+  });
+
+  it("should call callback with empty object when no options or args", () => {
+    start(["node", "app", "command_1"]);
+    expect(callback).toBeCalledWith({});
   });
 });

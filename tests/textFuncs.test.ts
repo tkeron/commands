@@ -1,4 +1,8 @@
-import { command, commands, commandsCollection } from "./helpers/testConstants.js";
+import {
+  command,
+  commands,
+  commandsCollection,
+} from "./helpers/testConstants.js";
 import {
   buildDescriptionsText,
   buildHelpText,
@@ -12,7 +16,7 @@ describe("text Functions", () => {
       const result = getCommandText(command);
 
       expect(result).toBe(
-        "command_1|al1|al2   [pos1] [pos2]   [op1=opEx1] [op2=VALUE]  "
+        "command_1|al1|al2   [pos1] [pos2]   [op1=opEx1] [op2=VALUE]  ",
       );
     });
 
@@ -20,7 +24,7 @@ describe("text Functions", () => {
       const result = getCommandText({ ...command, aliases: [] });
 
       expect(result).toBe(
-        "command_1   [pos1] [pos2]   [op1=opEx1] [op2=VALUE]  "
+        "command_1   [pos1] [pos2]   [op1=opEx1] [op2=VALUE]  ",
       );
     });
   });
@@ -28,25 +32,25 @@ describe("text Functions", () => {
     it("should return help text", () => {
       const result = buildHelpText(commands, commandsCollection);
       expect(result).toBe(
-        "\nheader text...\nhelp line...\nhelp line...\nhelp line...\nfooter text...\n"
+        "\nheader text...\nhelp line...\nhelp line...\nhelp line...\nfooter text...\n",
       );
     });
     it("should return help text without headerText", () => {
       const result = buildHelpText(
         { ...commands, headerText: "" },
-        commandsCollection
+        commandsCollection,
       );
       expect(result).toBe(
-        "\n\nhelp line...\nhelp line...\nhelp line...\nfooter text...\n"
+        "\n\nhelp line...\nhelp line...\nhelp line...\nfooter text...\n",
       );
     });
     it("should return help text without footerText", () => {
       const result = buildHelpText(
         { ...commands, footerText: "" },
-        commandsCollection
+        commandsCollection,
       );
       expect(result).toBe(
-        "\nheader text...\nhelp line...\nhelp line...\nhelp line...\n\n"
+        "\nheader text...\nhelp line...\nhelp line...\nhelp line...\n\n",
       );
     });
   });
@@ -54,6 +58,45 @@ describe("text Functions", () => {
     it("should return description text", () => {
       const result = buildDescriptionsText(commandsCollection);
       expect(result).toBe("help line...\n".repeat(3));
+    });
+
+    it("should return empty string for empty collection", () => {
+      const result = buildDescriptionsText({});
+      expect(result).toBe("");
+    });
+  });
+
+  describe("getCommandText edge cases", () => {
+    it("should handle command with no options and no positioned args", () => {
+      const result = getCommandText({
+        ...command,
+        options: [],
+        optionsExamples: [],
+        positionedArguments: [],
+        aliases: [],
+      });
+      expect(result).toBe("command_1  ");
+    });
+
+    it("should handle command with only aliases", () => {
+      const result = getCommandText({
+        ...command,
+        options: [],
+        optionsExamples: [],
+        positionedArguments: [],
+      });
+      expect(result).toBe("command_1|al1|al2  ");
+    });
+
+    it("should use VALUE as default example when not provided", () => {
+      const result = getCommandText({
+        ...command,
+        options: ["opt1"],
+        optionsExamples: [],
+        positionedArguments: [],
+        aliases: [],
+      });
+      expect(result).toBe("command_1      [opt1=VALUE]  ");
     });
   });
 });

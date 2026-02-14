@@ -9,13 +9,11 @@ export interface Command {
   callback: Callback;
 }
 
-export type parsedOptions = { [key: string]: string } | any;
+export type ParsedOptions = { [key: string]: string };
 
-export type Callback = (options?: parsedOptions) => void;
+export type Callback = (options?: ParsedOptions) => void;
 
 export type CommandsCollection = { [key: string]: Command };
-
-export type OrderedArgumentNames = { [key: string]: string[] };
 
 export interface CommandFactory {
   name: string;
