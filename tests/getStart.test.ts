@@ -105,3 +105,161 @@ describe("getStart", () => {
     expect(callback).toBeCalledWith({});
   });
 });
+
+describe("getStart - Standard CLI Syntax", () => {
+  let callback: Mock<any>;
+  let start: (argv?: string[]) => void;
+  let logMock: Mock<any>;
+  let logs: any[] = [];
+  let savedArgv: string[];
+  let commandsCollectionStandard: any;
+
+  beforeEach(() => {
+    savedArgv = process.argv;
+    logs = [];
+    callback = mock();
+    commandsCollectionStandard = {
+      build: {
+        name: "build",
+        aliases: [],
+        description: "Build the project",
+        options: [],
+        optionsExamples: [],
+        positionedArguments: ["source"],
+        optionDefinitions: [
+          {
+            name: "output",
+            shortFlag: "o",
+            type: "string",
+            description: "Output directory",
+            default: "./dist",
+          },
+          {
+            name: "verbose",
+            shortFlag: "v",
+            type: "boolean",
+            description: "Verbose output",
+          },
+          {
+            name: "minify",
+            type: "boolean",
+            description: "Minify output",
+            required: false,
+          },
+        ],
+        getHelpLine: () => "",
+        callback,
+      },
+      help: {
+        name: "help",
+        aliases: [],
+        description: "Show help",
+        options: [],
+        optionsExamples: [],
+        positionedArguments: [],
+        optionDefinitions: [],
+        getHelpLine: () => "",
+        callback: () => {},
+      },
+    };
+    start = getStart(commandsCollectionStandard);
+    logMock = spyOn(console, "log").mockImplementation((...args: any) => {
+      logs.push(args);
+    });
+  });
+
+  afterEach(() => {
+    process.argv = savedArgv;
+    callback.mockClear();
+    logMock.mockRestore();
+  });
+
+  it("should parse boolean flag --verbose", () => {
+    start(["node", "app", "build", "--verbose"]);
+    expect(callback).toBeCalledTimes(1);
+    const options = callback.mock.calls[0][0] as any;
+    expect(options.verbose).toBe(true);
+  });
+
+  it("should parse short flag -v", () => {
+    start(["node", "app", "build", "-v"]);
+    expect(callback).toBeCalledTimes(1);
+    const options = callback.mock.calls[0][0] as any;
+    expect(options.verbose).toBe(true);
+  });
+
+  it("should parse option with value --output dist", () => {
+    start(["node", "app", "build", "--output", "dist"]);
+    expect(callback).toBeCalledTimes(1);
+    const options = callback.mock.calls[0][0] as any;
+    expect(options.output).toBe("dist");
+  });
+
+  it("should parse short option -o dist", () => {
+    start(["node", "app", "build", "-o", "dist"]);
+    expect(callback).toBeCalledTimes(1);
+    const options = callback.mock.calls[0][0] as any;
+    expect(options.output).toBe("dist");
+  });
+
+  it("should parse multiple flags and options", () => {
+    start([
+      "node",
+      "app",
+      "build",
+      "--verbose",
+      "--output",
+      "build",
+      "--minify",
+    ]);
+    expect(callback).toBeCalledTimes(1);
+    const options = callback.mock.calls[0][0] as any;
+    expect(options.verbose).toBe(true);
+    expect(options.output).toBe("build");
+    expect(options.minify).toBe(true);
+  });
+
+  it("should apply default values", () => {
+    start(["node", "app", "build"]);
+    expect(callback).toBeCalledTimes(1);
+    const options = callback.mock.calls[0][0] as any;
+    expect(options.output).toBe("./dist");
+  });
+
+  it("should handle positioned args with standard syntax", () => {
+    start(["node", "app", "build", "src", "--verbose"]);
+    expect(callback).toBeCalledTimes(1);
+    const options = callback.mock.calls[0][0] as any;
+    expect(options.source).toBe("src");
+    expect(options.verbose).toBe(true);
+  });
+
+  it("should validate required options and show error", () => {
+    commandsCollectionStandard.build.optionDefinitions[0].required = true;
+    commandsCollectionStandard.build.optionDefinitions[0].default = undefined;
+    start(["node", "app", "build"]);
+    expect(logs.length).toBeGreaterThan(0);
+  });
+
+  it("should support mixed legacy and standard syntax", () => {
+    start(["node", "app", "build", "--verbose", "key=value"]);
+    expect(callback).toBeCalledTimes(1);
+    const options = callback.mock.calls[0][0] as any;
+    expect(options.verbose).toBe(true);
+    expect(options.key).toBe("value");
+  });
+
+  it("should handle combined short flags -vx", () => {
+    commandsCollectionStandard.build.optionDefinitions.push({
+      name: "watch",
+      shortFlag: "w",
+      type: "boolean",
+      description: "Watch mode",
+    });
+    start(["node", "app", "build", "-vw"]);
+    expect(callback).toBeCalledTimes(1);
+    const options = callback.mock.calls[0][0] as any;
+    expect(options.verbose).toBe(true);
+    expect(options.watch).toBe(true);
+  });
+});

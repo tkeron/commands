@@ -6,6 +6,7 @@ import type {
   Commands,
   CommandsCollection,
   Callback,
+  OptionDefinition,
 } from "./types.js";
 export * from "./types.js";
 
@@ -41,6 +42,9 @@ export const initCommands = (
     name: undefined,
     addAlias: undefined,
     addOption: undefined,
+    addFlag: undefined,
+    addStringOption: undefined,
+    addNumberOption: undefined,
     addPositionedArgument: undefined,
     addDescription: undefined,
     setCallback: undefined,
@@ -96,6 +100,7 @@ export const getAddCommand =
       options: [],
       optionsExamples: [],
       positionedArguments: [],
+      optionDefinitions: [],
       getHelpLine: undefined,
     });
     commandsCollection[commandName] = command;
@@ -103,6 +108,15 @@ export const getAddCommand =
 
     commandFactory.addAlias = getAddAlias(commandFactory, commandsCollection);
     commandFactory.addOption = getAddOption(commandFactory, commandsCollection);
+    commandFactory.addFlag = getAddFlag(commandFactory, commandsCollection);
+    commandFactory.addStringOption = getAddStringOption(
+      commandFactory,
+      commandsCollection,
+    );
+    commandFactory.addNumberOption = getAddNumberOption(
+      commandFactory,
+      commandsCollection,
+    );
     commandFactory.addDescription = getAddDescription(
       commandFactory,
       commandsCollection,
@@ -133,9 +147,15 @@ export const getAddAlias = (
 
 export const getAddOption =
   (commandFactory: CommandFactory, commandsCollection: CommandsCollection) =>
-  (option: string, example?: string) => {
-    commandsCollection[commandFactory.name].options.push(option);
-    commandsCollection[commandFactory.name].optionsExamples.push(example || "");
+  (option: string | OptionDefinition, example?: string) => {
+    if (typeof option === "string") {
+      commandsCollection[commandFactory.name].options.push(option);
+      commandsCollection[commandFactory.name].optionsExamples.push(
+        example || "",
+      );
+    } else {
+      commandsCollection[commandFactory.name].optionDefinitions.push(option);
+    }
 
     return commandFactory;
   };
@@ -190,6 +210,57 @@ export const getAddFooterText = (commands: Commands) => {
     return commands;
   };
 };
+
+export const getAddFlag =
+  (commandFactory: CommandFactory, commandsCollection: CommandsCollection) =>
+  (name: string, shortFlag?: string, description?: string): CommandFactory => {
+    const def: OptionDefinition = {
+      name,
+      shortFlag,
+      type: "boolean",
+      description: description || "",
+    };
+    commandsCollection[commandFactory.name].optionDefinitions.push(def);
+    return commandFactory;
+  };
+
+export const getAddStringOption =
+  (commandFactory: CommandFactory, commandsCollection: CommandsCollection) =>
+  (
+    name: string,
+    shortFlag?: string,
+    description?: string,
+    config?: Partial<OptionDefinition>,
+  ): CommandFactory => {
+    const def: OptionDefinition = {
+      name,
+      shortFlag,
+      type: "string",
+      description: description || "",
+      ...config,
+    };
+    commandsCollection[commandFactory.name].optionDefinitions.push(def);
+    return commandFactory;
+  };
+
+export const getAddNumberOption =
+  (commandFactory: CommandFactory, commandsCollection: CommandsCollection) =>
+  (
+    name: string,
+    shortFlag?: string,
+    description?: string,
+    config?: Partial<OptionDefinition>,
+  ): CommandFactory => {
+    const def: OptionDefinition = {
+      name,
+      shortFlag,
+      type: "number",
+      description: description || "",
+      ...config,
+    };
+    commandsCollection[commandFactory.name].optionDefinitions.push(def);
+    return commandFactory;
+  };
 
 export const getGetHelpLine =
   (command: Command) =>

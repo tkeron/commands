@@ -39,9 +39,34 @@ export const getCommandText = (command: Command): string => {
 
   const args = command.positionedArguments.map((a) => `[${a}]`).join(" ");
 
-  const options = command.options
-    .map((o, n) => `[${o}=${command.optionsExamples[n] || "VALUE"}]`)
-    .join(" ");
+  let optionsText = "";
 
-  return `${names}   ${args}   ${options}`.trim() + "  ";
+  if (command.optionDefinitions && command.optionDefinitions.length > 0) {
+    optionsText = command.optionDefinitions
+      .map((def) => {
+        const longFlag = `--${def.name}`;
+        const shortFlag = def.shortFlag ? `-${def.shortFlag}, ` : "";
+        const valueName = def.valueName || def.name;
+
+        if (def.type === "boolean") {
+          return def.required
+            ? `<${shortFlag}${longFlag}>`
+            : `[${shortFlag}${longFlag}]`;
+        } else {
+          const valueDisplay = def.required
+            ? `<${valueName}>`
+            : `<${valueName}>`;
+          return def.required
+            ? `<${shortFlag}${longFlag} ${valueDisplay}>`
+            : `[${shortFlag}${longFlag} ${valueDisplay}]`;
+        }
+      })
+      .join(" ");
+  } else {
+    optionsText = command.options
+      .map((o, n) => `[${o}=${command.optionsExamples[n] || "VALUE"}]`)
+      .join(" ");
+  }
+
+  return `${names}   ${args}   ${optionsText}`.trim() + "  ";
 };

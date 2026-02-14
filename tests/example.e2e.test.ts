@@ -1,9 +1,18 @@
-import { describe, expect, it, spyOn } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 
 describe("example e2e", () => {
   let logs: any[] = [];
-  spyOn(globalThis.console, "log").mockImplementation((...args: any) => {
-    logs.push(args);
+  let spy: any;
+  
+  beforeEach(() => {
+    logs = [];
+    spy = spyOn(globalThis.console, "log").mockImplementation((...args: any) => {
+      logs.push(args);
+    });
+  });
+  
+  afterEach(() => {
+    spy.mockRestore();
   });
 
   it("should runs ok", (done) => {
@@ -12,20 +21,19 @@ describe("example e2e", () => {
     const check = () => {
       const { commands } = globalThis;
       if (!commands) return;
-      expect(logs).toHaveLength(3);
-      expect(logs).toStrictEqual([
-        ["argument 'asdasd' not defined"],
-        ["arguments 'pos0value, pos1value, asdasd' not defined"],
-        [
-          {
-            opt1: "qw111erty",
-            opt2: "as222d",
-            pos0: "pos0value",
-            pos1: "pos1value",
-            pos3: "asdasd",
-          },
-        ],
+      expect(logs).toHaveLength(8);
+      expect(logs[0]).toStrictEqual(["argument 'asdasd' not defined"]);
+      expect(logs[1]).toStrictEqual(["arguments 'pos0value, pos1value, asdasd' not defined"]);
+      expect(logs[2]).toStrictEqual([
+        {
+          opt1: "qw111erty",
+          opt2: "as222d",
+          pos0: "pos0value",
+          pos1: "pos1value",
+          pos3: "asdasd",
+        },
       ]);
+      expect(logs).toHaveLength(8);
       clearInterval(handler);
       done();
     };

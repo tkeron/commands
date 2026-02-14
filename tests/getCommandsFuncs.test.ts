@@ -348,3 +348,145 @@ describe("chaining integration", () => {
     expect(returned).toBe(commands);
   });
 });
+
+describe("addOption with OptionDefinition", () => {
+  let commandsCollection: CommandsCollection;
+  let commands: Commands;
+
+  beforeEach(() => {
+    commandsCollection = {};
+    commands = initCommands(commandsCollection);
+  });
+
+  it("should accept string (legacy API)", () => {
+    commands.addCommand("test").addOption("output", "./dist");
+    expect(commandsCollection.test.options).toContain("output");
+    expect(commandsCollection.test.optionsExamples).toContain("./dist");
+  });
+
+  it("should accept OptionDefinition object", () => {
+    commands.addCommand("test").addOption({
+      name: "output",
+      shortFlag: "o",
+      type: "string",
+      description: "Output directory",
+      default: "./dist",
+    });
+    expect(commandsCollection.test.optionDefinitions).toHaveLength(1);
+    expect(commandsCollection.test.optionDefinitions[0].name).toBe("output");
+    expect(commandsCollection.test.optionDefinitions[0].shortFlag).toBe("o");
+  });
+
+  it("should register option in optionDefinitions array", () => {
+    commands.addCommand("test").addOption({
+      name: "verbose",
+      type: "boolean",
+      description: "Verbose",
+    });
+    expect(commandsCollection.test.optionDefinitions).toHaveLength(1);
+  });
+
+  it("should support chaining with OptionDefinition", () => {
+    const result = commands
+      .addCommand("test")
+      .addOption({
+        name: "output",
+        type: "string",
+        description: "Output",
+      })
+      .addOption({
+        name: "verbose",
+        type: "boolean",
+        description: "Verbose",
+      });
+    expect(commandsCollection.test.optionDefinitions).toHaveLength(2);
+    expect(result.commands).toBeTruthy();
+  });
+});
+
+describe("addFlag helper", () => {
+  let commandsCollection: CommandsCollection;
+  let commands: Commands;
+
+  beforeEach(() => {
+    commandsCollection = {};
+    commands = initCommands(commandsCollection);
+  });
+
+  it("should add boolean flag", () => {
+    commands.addCommand("test").addFlag("verbose", "v", "Enable verbose");
+    const def = commandsCollection.test.optionDefinitions[0];
+    expect(def.name).toBe("verbose");
+    expect(def.type).toBe("boolean");
+    expect(def.shortFlag).toBe("v");
+    expect(def.description).toBe("Enable verbose");
+  });
+
+  it("should add flag without short flag", () => {
+    commands.addCommand("test").addFlag("verbose", undefined, "Enable verbose");
+    const def = commandsCollection.test.optionDefinitions[0];
+    expect(def.name).toBe("verbose");
+    expect(def.shortFlag).toBeUndefined();
+  });
+
+  it("should return commandFactory for chaining", () => {
+    const result = commands.addCommand("test").addFlag("verbose");
+    expect(result.commands).toBeTruthy();
+  });
+});
+
+describe("addStringOption helper", () => {
+  let commandsCollection: CommandsCollection;
+  let commands: Commands;
+
+  beforeEach(() => {
+    commandsCollection = {};
+    commands = initCommands(commandsCollection);
+  });
+
+  it("should add string option", () => {
+    commands
+      .addCommand("test")
+      .addStringOption("output", "o", "Output directory");
+    const def = commandsCollection.test.optionDefinitions[0];
+    expect(def.name).toBe("output");
+    expect(def.type).toBe("string");
+    expect(def.shortFlag).toBe("o");
+  });
+
+  it("should support config parameter", () => {
+    commands.addCommand("test").addStringOption("output", "o", "Output", {
+      default: "./dist",
+      required: true,
+    });
+    const def = commandsCollection.test.optionDefinitions[0];
+    expect(def.default).toBe("./dist");
+    expect(def.required).toBe(true);
+  });
+});
+
+describe("addNumberOption helper", () => {
+  let commandsCollection: CommandsCollection;
+  let commands: Commands;
+
+  beforeEach(() => {
+    commandsCollection = {};
+    commands = initCommands(commandsCollection);
+  });
+
+  it("should add number option", () => {
+    commands.addCommand("test").addNumberOption("port", "p", "Port number");
+    const def = commandsCollection.test.optionDefinitions[0];
+    expect(def.name).toBe("port");
+    expect(def.type).toBe("number");
+  });
+
+  it("should support config parameter", () => {
+    commands.addCommand("test").addNumberOption("port", "p", "Port", {
+      default: 3000,
+      required: false,
+    });
+    const def = commandsCollection.test.optionDefinitions[0];
+    expect(def.default).toBe(3000);
+  });
+});

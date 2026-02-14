@@ -100,3 +100,80 @@ describe("text Functions", () => {
     });
   });
 });
+
+describe("getCommandText with optionDefinitions", () => {
+  it("should format boolean flag with short flag", () => {
+    const command = {
+      ...commandsCollection.command_1,
+      optionDefinitions: [
+        {
+          name: "verbose",
+          shortFlag: "v",
+          type: "boolean" as const,
+          description: "Verbose output",
+        },
+      ],
+    };
+    const result = getCommandText(command);
+    expect(result).toContain("--verbose");
+    expect(result).toContain("-v");
+  });
+
+  it("should format string option with short flag", () => {
+    const command = {
+      ...commandsCollection.command_1,
+      optionDefinitions: [
+        {
+          name: "output",
+          shortFlag: "o",
+          type: "string" as const,
+          description: "Output directory",
+        },
+      ],
+    };
+    const result = getCommandText(command);
+    expect(result).toContain("--output");
+    expect(result).toContain("-o");
+  });
+
+  it("should show required marker for required options", () => {
+    const command = {
+      ...commandsCollection.command_1,
+      optionDefinitions: [
+        {
+          name: "config",
+          type: "string" as const,
+          description: "Config file",
+          required: true,
+        },
+      ],
+    };
+    const result = getCommandText(command);
+    expect(result).toContain("<config>");
+  });
+
+  it("should show optional marker for optional options", () => {
+    const command = {
+      ...commandsCollection.command_1,
+      optionDefinitions: [
+        {
+          name: "format",
+          type: "string" as const,
+          description: "Output format",
+          required: false,
+        },
+      ],
+    };
+    const result = getCommandText(command);
+    expect(result).toContain("[--format");
+  });
+
+  it("should fall back to legacy format when no optionDefinitions", () => {
+    const command = {
+      ...commandsCollection.command_1,
+      optionDefinitions: [],
+    };
+    const result = getCommandText(command);
+    expect(result).toContain("[op1=opEx1]");
+  });
+});

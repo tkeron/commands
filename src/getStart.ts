@@ -1,4 +1,7 @@
 import type { CommandsCollection } from "./types.js";
+import { parseArgs } from "./parseArgs.js";
+import { applyDefaults } from "./applyDefaults.js";
+import { validateOptions } from "./validateOptions.js";
 
 export const getStart =
   (commandsCollection: CommandsCollection) => (argv?: string[]) => {
@@ -19,35 +22,27 @@ export const getStart =
       return;
     }
 
-    const options = argv
-      .slice(1)
-      .filter((arg) => arg.includes("="))
-      .map((arg) => arg.split("="))
-      .reduce((p: any, c) => {
-        p[c[0]] = c[1];
+    const parsedResult = parseArgs(argv.slice(1), command);
+    let options = parsedResult.options;
 
-        return p;
-      }, {});
+    options = applyDefaults(options, command);
 
-    const positionedArgsValues = argv
-      .slice(1)
-      .filter((arg) => !arg.includes("="));
-
-    if (positionedArgsValues.length <= command.positionedArguments.length) {
-      positionedArgsValues.forEach(
-        (arg, n) => (options[command.positionedArguments[n]] = arg),
-      );
+    const validation = validateOptions(options, command);
+    if (!validation.valid) {
+      for (const error of validation.errors) {
+        console.log(error);
+      }
+      return;
     }
 
-    if (positionedArgsValues.length > command.positionedArguments.length) {
+    const positionedOverflow = parsedResult.positional.filter(
+      (arg) =>
+        !command.positionedArguments.some((name) => options[name] === arg),
+    );
+
+    if (positionedOverflow.length > 0) {
       console.log(
-        `argument${
-          positionedArgsValues.length - command.positionedArguments.length === 1
-            ? ""
-            : "s"
-        } '${positionedArgsValues
-          .slice(command.positionedArguments.length)
-          .join(", ")}' not defined`,
+        `argument${positionedOverflow.length === 1 ? "" : "s"} '${positionedOverflow.join(", ")}' not defined`,
       );
       return;
     }
