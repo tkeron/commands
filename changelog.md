@@ -1,3 +1,8 @@
+# v0.4.4
+
+- migrate to npm trusted publishing (removes need for access tokens)
+- provenance attestations generated automatically by npm
+
 # v0.4.3
 
 - fix: restore NODE_AUTH_TOKEN requirement for npm publish
