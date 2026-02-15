@@ -22,6 +22,9 @@
     "command-line",
     "arguments"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "url": "git@github.com:tkeron/commands.git"
   }
