@@ -1,21 +1,14 @@
 # v0.4.4
 
-- migrate to npm trusted publishing (removes need for access tokens)
-- provenance attestations generated automatically by npm
+- migrate to npm trusted publishing (token-free authentication)
+- add npm@latest installation for npm 11.5.1+ requirement
+- add --provenance flag to publish command
+- fix repository URL format (git+ prefix)
+- add comprehensive test coverage for version command
 
 # v0.4.3
 
 - fix: restore NODE_AUTH_TOKEN requirement for npm publish
-
-# v0.4.2
-
-- test: validate trusted publishing without NODE_AUTH_TOKEN
-- fix: use correct repository format in package.json (type + HTTPS URL)
-
-# v0.4.1
-
-- add comprehensive test coverage for version command
-- add publishConfig to package.json for npm publishing
 
 # v0.4.0
 
