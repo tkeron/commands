@@ -1,3 +1,7 @@
+# v0.4.3
+
+- fix: restore NODE_AUTH_TOKEN requirement for npm publish
+
 # v0.4.2
 
 - test: validate trusted publishing without NODE_AUTH_TOKEN
