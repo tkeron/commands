@@ -1,6 +1,13 @@
+# v0.4.6
+
+- add Prettier for consistent code formatting
+- fix test command in workflow (bun test → bun run test)
+- format existing code with Prettier
+- fix markdown escaping in changelog
+
 # v0.4.5
 
-- use Node lts/* instead of fixed version in workflow
+- use Node lts/\* instead of fixed version in workflow
 
 # v0.4.4
 
