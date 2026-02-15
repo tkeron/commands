@@ -1,3 +1,8 @@
+# v0.4.1
+
+- add comprehensive test coverage for version command
+- add publishConfig to package.json for npm publishing
+
 # v0.4.0
 
 - add standard CLI syntax support (`--flag`, `-f`, `--opt value`, `--opt=value`)
