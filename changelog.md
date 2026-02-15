@@ -1,3 +1,8 @@
+# v0.4.2
+
+- test: validate trusted publishing without NODE_AUTH_TOKEN
+- fix: use correct repository format in package.json (type + HTTPS URL)
+
 # v0.4.1
 
 - add comprehensive test coverage for version command

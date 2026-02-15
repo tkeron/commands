@@ -1,6 +1,6 @@
 {
   "name": "@tkeron/commands",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "library for handling command line arguments",
   "main": "src/index.ts",
   "module": "src/index.ts",
@@ -26,6 +26,7 @@
     "access": "public"
   },
   "repository": {
-    "url": "git@github.com:tkeron/commands.git"
+    "type": "git",
+    "url": "https://github.com/tkeron/commands.git"
   }
 }
