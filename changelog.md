@@ -1,3 +1,7 @@
+# v0.4.5
+
+- use Node lts/* instead of fixed version in workflow
+
 # v0.4.4
 
 - migrate to npm trusted publishing (token-free authentication)
