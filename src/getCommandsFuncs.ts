@@ -1,5 +1,8 @@
 import { getStart } from "./getStart.js";
 import { buildHelpText, getCommandText } from "./textFuncs.js";
+import { stringWidth } from "./stringWidth.js";
+import { wrapText } from "./wrapText.js";
+import { getTerminalWidth } from "./getTerminalWidth.js";
 import type {
   CommandFactory,
   Command,
@@ -264,12 +267,40 @@ export const getAddNumberOption =
 
 export const getGetHelpLine =
   (command: Command) =>
-  (width: number = 50) => {
-    let helpLine =
-      getCommandText(command).padEnd(width, ".") +
-      "  " +
-      command.description +
-      "\n";
+  (width: number = 50, terminalWidth?: number) => {
+    const termWidth = terminalWidth ?? getTerminalWidth();
+    const leftPart = getCommandText(command);
+    const leftVisual = stringWidth(leftPart);
+    const leftPadded =
+      leftVisual >= width
+        ? leftPart
+        : leftPart + ".".repeat(width - leftVisual);
+    const leftActualWidth = Math.max(leftVisual, width);
+    const description = command.description ?? "";
 
-    return helpLine;
+    if (stringWidth(description) === 0) {
+      return leftPadded + "  \n";
+    }
+
+    const sepWidth = 2;
+    const descBudget = termWidth - leftActualWidth - sepWidth;
+    const minBudget = 20;
+
+    if (descBudget < minBudget) {
+      const indent = "    ";
+      const lines = wrapText(
+        description,
+        Math.max(minBudget, termWidth - indent.length),
+        0,
+      );
+      const body = lines.map((l) => indent + l).join("\n");
+      return leftPadded + "\n" + body + "\n";
+    }
+
+    const lines = wrapText(description, descBudget, 0);
+    const hangingPad = " ".repeat(leftActualWidth + sepWidth);
+    const joined = lines
+      .map((l, i) => (i === 0 ? l : hangingPad + l))
+      .join("\n");
+    return leftPadded + "  " + joined + "\n";
   };

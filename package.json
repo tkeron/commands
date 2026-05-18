@@ -1,6 +1,6 @@
 {
   "name": "@tkeron/commands",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "library for handling command line arguments",
   "main": "src/index.ts",
   "module": "src/index.ts",

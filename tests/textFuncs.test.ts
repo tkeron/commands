@@ -177,3 +177,80 @@ describe("getCommandText with optionDefinitions", () => {
     expect(result).toContain("[op1=opEx1]");
   });
 });
+
+describe("getGetHelpLine wrapping behavior", () => {
+  const baseCommand = {
+    name: "build",
+    description: "",
+    aliases: [],
+    options: [],
+    optionsExamples: [],
+    positionedArguments: [],
+    optionDefinitions: [],
+    getHelpLine: () => "",
+    callback: () => {},
+  };
+
+  it("returns padded line with no description (backward compatible)", async () => {
+    const { getGetHelpLine } = await import("../src/getCommandsFuncs.js");
+    const helpLine = getGetHelpLine(baseCommand);
+    const result = helpLine(50, 80);
+    expect(result.endsWith("  \n")).toBe(true);
+    expect(result.split("\n").length).toBe(2);
+  });
+
+  it("keeps description on same line when fits", async () => {
+    const { getGetHelpLine } = await import("../src/getCommandsFuncs.js");
+    const helpLine = getGetHelpLine({
+      ...baseCommand,
+      description: "short desc",
+    });
+    const result = helpLine(20, 80);
+    expect(result.split("\n").length).toBe(2);
+    expect(result).toContain("short desc");
+  });
+
+  it("wraps long description with hanging indent", async () => {
+    const { getGetHelpLine } = await import("../src/getCommandsFuncs.js");
+    const helpLine = getGetHelpLine({
+      ...baseCommand,
+      description:
+        "a very long description that should wrap across multiple lines",
+    });
+    const result = helpLine(20, 50);
+    const lines = result.split("\n").filter((l) => l.length > 0);
+    expect(lines.length).toBeGreaterThan(1);
+    for (let i = 1; i < lines.length; i++) {
+      expect(lines[i].startsWith(" ".repeat(22))).toBe(true);
+    }
+  });
+
+  it("puts description on next line when left col too wide", async () => {
+    const { getGetHelpLine } = await import("../src/getCommandsFuncs.js");
+    const helpLine = getGetHelpLine({
+      ...baseCommand,
+      description: "some description text here",
+    });
+    const result = helpLine(70, 80);
+    const lines = result.split("\n").filter((l) => l.length > 0);
+    expect(lines.length).toBeGreaterThanOrEqual(2);
+    expect(lines[0]).toContain("build");
+    expect(lines[1].startsWith("    ")).toBe(true);
+  });
+
+  it("no line exceeds terminal width", async () => {
+    const { getGetHelpLine } = await import("../src/getCommandsFuncs.js");
+    const { stringWidth } = await import("../src/stringWidth.js");
+    const termWidth = 40;
+    const helpLine = getGetHelpLine({
+      ...baseCommand,
+      description:
+        "alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu",
+    });
+    const result = helpLine(15, termWidth);
+    const lines = result.split("\n").filter((l) => l.length > 0);
+    for (const line of lines) {
+      expect(stringWidth(line)).toBeLessThanOrEqual(termWidth);
+    }
+  });
+});

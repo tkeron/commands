@@ -20,7 +20,7 @@ export interface Command {
   optionsExamples: string[];
   positionedArguments: string[];
   optionDefinitions: OptionDefinition[];
-  getHelpLine: (width?: number) => string;
+  getHelpLine: (width?: number, terminalWidth?: number) => string;
   callback: Callback;
 }
 

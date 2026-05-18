@@ -1,3 +1,13 @@
+# v0.4.8
+
+- terminal-aware help formatting: wrap descriptions to terminal width
+- accurate visual column width via `Bun.stringWidth` (CJK / emoji / ANSI safe)
+- add `stringWidth`, `wrapText`, `getTerminalWidth` internal helpers
+- `getHelpLine` / `buildDescriptionsText` accept optional `terminalWidth` param
+- fall back to next line when left column leaves < 20 cols for description
+
+# v0.4.7
+
 # v0.4.6
 
 - add Prettier for consistent code formatting

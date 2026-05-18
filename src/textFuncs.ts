@@ -1,10 +1,13 @@
 import type { Command, Commands, CommandsCollection } from "./types.js";
+import { getTerminalWidth } from "./getTerminalWidth.js";
+import { stringWidth } from "./stringWidth.js";
 
 export const buildHelpText = (
   commands: Commands,
   commandsCollection: CommandsCollection,
+  terminalWidth?: number,
 ): string => {
-  let descriptions = buildDescriptionsText(commandsCollection);
+  let descriptions = buildDescriptionsText(commandsCollection, terminalWidth);
 
   const helpText = `\n${
     (commands.headerText.length > 0 && commands.headerText) || ""
@@ -16,18 +19,22 @@ export const buildHelpText = (
 
 export const buildDescriptionsText = (
   commandsCollection: CommandsCollection,
+  terminalWidth?: number,
 ): string => {
+  const termWidth = terminalWidth ?? getTerminalWidth();
   let descriptions = "";
   let max = 0;
   const ready: string[] = [];
 
   for (const com of Object.values(commandsCollection)) {
     const commandText = getCommandText(com);
-    if (commandText.length > max) max = commandText.length;
+    const w = stringWidth(commandText);
+    if (w > max) max = w;
   }
+  const leftCol = max + 4;
   for (const com of Object.values(commandsCollection)) {
     if (ready.includes(com.name)) continue;
-    descriptions += com.getHelpLine(max + 4);
+    descriptions += com.getHelpLine(leftCol, termWidth);
     ready.push(com.name);
   }
 
